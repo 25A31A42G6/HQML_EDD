@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Skopeo Tech — QML Disease Risk Platform</title>
+    <title>Skopeo Tech — Dual QML & Bulk Predictions</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen font-sans">
+<body class="bg-slate-950 text-slate-100 min-h-screen font-sans pb-12">
 
     <nav class="border-b border-slate-800 bg-slate-900/60 backdrop-blur px-6 py-4 flex justify-between items-center sticky top-0 z-50">
         <div class="flex items-center space-x-3">
@@ -16,93 +16,209 @@
             </div>
             <div>
                 <span class="font-bold text-lg text-white tracking-wide block leading-none">SKOPEO TECH</span>
-                <span class="text-[10px] text-cyan-400 font-mono">QML Disease Diagnostic Engine</span>
+                <span class="text-[10px] text-cyan-400 font-mono">Dual-Engine HQML (PennyLane + Entangled Qiskit) Diagnostic Dashboard</span>
             </div>
         </div>
-        <span class="text-xs bg-cyan-950/80 text-cyan-400 border border-cyan-800/80 px-3 py-1 rounded-full font-mono">
-            PennyLane Quantum Kernel Active
-        </span>
+        <button onclick="fetchBatchPredictions()" class="text-xs bg-cyan-950 hover:bg-cyan-900 text-cyan-300 border border-cyan-700/80 px-4 py-2 rounded-lg font-mono transition">
+            ↻ Load Full Datasets Predictions
+        </button>
     </nav>
 
-    <main class="max-w-7xl mx-auto px-6 py-8 grid grid-cols-1 lg:grid-cols-12 gap-8">
+    <main class="max-w-7xl mx-auto px-6 py-8 space-y-10">
         
-        <div class="lg:col-span-5 bg-slate-900/90 p-6 rounded-2xl border border-slate-800/80 shadow-xl space-y-4">
-            <div class="border-b border-slate-800 pb-3">
-                <h2 class="text-lg font-bold text-cyan-400 flex items-center gap-2">
-                    <span class="w-2 h-2 rounded-full bg-cyan-400"></span>
-                    Patient Clinical Biomarkers
-                </h2>
-                <p class="text-xs text-slate-400 mt-0.5">Enter clinical parameters to calculate Quantum Kernel clustering routing.</p>
-            </div>
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
             
-            <form id="healthForm" class="space-y-4">
-                <div>
-                    <label class="block text-xs font-semibold text-slate-300 mb-1">Fasting Glucose Level (mg/dL)</label>
-                    <input type="number" id="glucose" value="120" required class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3.5 py-2.5 text-sm text-cyan-300 focus:outline-none focus:border-cyan-500 transition">
+            <div class="lg:col-span-4 bg-slate-900/90 p-6 rounded-2xl border border-slate-800/80 shadow-xl space-y-4">
+                <div class="border-b border-slate-800 pb-3">
+                    <h2 class="text-base font-bold text-cyan-400 flex items-center gap-2">
+                        <span class="w-2 h-2 rounded-full bg-cyan-400"></span>
+                        Individual Biomarker Input
+                    </h2>
+                    <p class="text-xs text-slate-400 mt-0.5">Calculates individual risk score & state overlap across PennyLane & Qiskit.</p>
                 </div>
-
-                <div>
-                    <label class="block text-xs font-semibold text-slate-300 mb-1">Serum Cholesterol Level (mg/dL)</label>
-                    <input type="number" id="cholesterol" value="210" required class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3.5 py-2.5 text-sm text-cyan-300 focus:outline-none focus:border-cyan-500 transition">
-                </div>
-
-                <div class="grid grid-cols-2 gap-4">
+                
+                <form id="healthForm" class="space-y-3 text-xs">
                     <div>
-                        <label class="block text-xs font-semibold text-slate-300 mb-1">Age (Years)</label>
-                        <input type="number" id="age" value="48" required class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3.5 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-cyan-500 transition">
+                        <label class="block font-semibold text-slate-300 mb-1">Fasting Glucose (mg/dL)</label>
+                        <input type="number" id="glucose" value="125" required class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-cyan-300 focus:outline-none focus:border-cyan-500">
                     </div>
+
                     <div>
-                        <label class="block text-xs font-semibold text-slate-300 mb-1">BMI Index</label>
-                        <input type="number" step="0.1" id="bmi" value="28.5" required class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3.5 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-cyan-500 transition">
+                        <label class="block font-semibold text-slate-300 mb-1">Serum Cholesterol (mg/dL)</label>
+                        <input type="number" id="cholesterol" value="215" required class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-cyan-300 focus:outline-none focus:border-cyan-500">
                     </div>
-                </div>
 
-                <div>
-                    <label class="block text-xs font-semibold text-slate-300 mb-1">Resting Blood Pressure (mmHg)</label>
-                    <input type="number" id="bp" value="130" required class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3.5 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-cyan-500 transition">
-                </div>
-
-                <button type="submit" class="w-full py-3 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-bold rounded-lg shadow-lg shadow-cyan-500/20 transition active:scale-[0.99]">
-                    Run Quantum Clustering & Prediction
-                </button>
-            </form>
-        </div>
-
-        <div class="lg:col-span-7 space-y-6">
-            
-            <div class="bg-slate-900/90 p-6 rounded-2xl border border-slate-800/80 shadow-xl flex justify-between items-center">
-                <div>
-                    <span class="text-xs text-slate-400 font-mono uppercase tracking-wider block">Assigned Cluster Dataset</span>
-                    <span id="detectedDataset" class="text-2xl font-bold text-white mt-1 block">Awaiting Metric Input...</span>
-                </div>
-                <div class="text-right font-mono text-xs text-slate-400 bg-slate-950 p-3 rounded-lg border border-slate-800">
-                    <div>Q-Fidelity (Diabetes): <span id="qDiab" class="text-cyan-400 font-bold">0.0000</span></div>
-                    <div>Q-Fidelity (Heart): <span id="qHeart" class="text-cyan-400 font-bold">0.0000</span></div>
-                </div>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div class="bg-slate-900/90 p-6 rounded-2xl border border-slate-800/80 shadow-xl flex flex-col items-center justify-center">
-                    <h3 class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Logistic Regression Risk Rate</h3>
-                    <div class="w-44 h-44 relative flex items-center justify-center">
-                        <canvas id="riskChart"></canvas>
-                        <div id="riskScoreText" class="absolute text-2xl font-bold font-mono text-cyan-400">0%</div>
-                    </div>
-                </div>
-
-                <div class="bg-slate-900/90 p-6 rounded-2xl border border-slate-800/80 shadow-xl flex flex-col justify-between space-y-4">
-                    <div>
-                        <h3 class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Clinical Risk Stratification</h3>
-                        <div id="riskBadge" class="inline-block px-3 py-1 rounded-full text-xs font-bold bg-slate-800 text-slate-400 border border-slate-700">
-                            Status Pending
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block font-semibold text-slate-300 mb-1">Age (Years)</label>
+                            <input type="number" id="age" value="48" required class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-slate-200 focus:outline-none focus:border-cyan-500">
+                        </div>
+                        <div>
+                            <label class="block font-semibold text-slate-300 mb-1">BMI Index</label>
+                            <input type="number" step="0.1" id="bmi" value="28.5" required class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-slate-200 focus:outline-none focus:border-cyan-500">
                         </div>
                     </div>
+
                     <div>
-                        <h4 class="text-xs font-semibold text-slate-300 mb-1">Recommended Solution:</h4>
-                        <p id="solutionText" class="text-xs text-slate-400 leading-relaxed">
-                            Submit patient metrics to view recommendations calculated via PennyLane Quantum Kernel overlap and Logistic Regression modeling.
-                        </p>
+                        <label class="block font-semibold text-slate-300 mb-1">Resting BP (mmHg)</label>
+                        <input type="number" id="bp" value="130" required class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-slate-200 focus:outline-none focus:border-cyan-500">
                     </div>
+
+                    <button type="submit" class="w-full py-2.5 mt-2 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-bold rounded-lg shadow-lg shadow-cyan-500/20 transition">
+                        Run Dual QML Prediction
+                    </button>
+                </form>
+            </div>
+
+            <div class="lg:col-span-8 space-y-6">
+                
+                <div class="bg-slate-900/90 p-5 rounded-2xl border border-slate-800/80 shadow-xl flex justify-between items-center">
+                    <div>
+                        <span class="text-[11px] text-slate-400 font-mono uppercase tracking-wider block">Target Classification Profile</span>
+                        <span id="detectedDataset" class="text-xl font-bold text-white mt-1 block">Awaiting Input...</span>
+                    </div>
+                    <div class="text-right font-mono text-xs text-slate-400 bg-slate-950 p-3 rounded-lg border border-slate-800 space-y-1">
+                        <div class="text-cyan-400" title="Variational expectation value from PennyLane QNode">
+                            PennyLane (Diab): <span id="plDiab" class="font-bold">0.0000</span> | (Heart): <span id="plHeart" class="font-bold">0.0000</span>
+                        </div>
+                        <div class="text-blue-400" title="Entangled state vector overlap amplitude from Qiskit backend">
+                            Qiskit Overlap (Diab): <span id="qkDiab" class="font-bold">0.0000</span> | (Heart): <span id="qkHeart" class="font-bold">0.0000</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-slate-900/90 p-5 rounded-2xl border border-slate-800/80 shadow-xl flex flex-col items-center justify-center">
+                        <h3 class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Individual Risk Probability</h3>
+                        <div class="w-36 h-36 relative flex items-center justify-center">
+                            <canvas id="riskChart"></canvas>
+                            <div id="riskScoreText" class="absolute text-xl font-bold font-mono text-cyan-400">0%</div>
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-900/90 p-5 rounded-2xl border border-slate-800/80 shadow-xl flex flex-col justify-between space-y-3">
+                        <div>
+                            <h3 class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Clinical Stratification</h3>
+                            <div id="riskBadge" class="inline-block px-3 py-1 rounded-full text-xs font-bold bg-slate-800 text-slate-400 border border-slate-700">
+                                Pending
+                            </div>
+                        </div>
+                        <div>
+                            <h4 class="text-xs font-semibold text-slate-300 mb-1">Clinical Solution:</h4>
+                            <p id="solutionText" class="text-xs text-slate-400 leading-relaxed">
+                                Enter patient values above to execute dual quantum clustering & regression modeling.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-slate-900/90 p-5 rounded-2xl border border-slate-800/80 shadow-xl space-y-3">
+                    <h3 class="text-xs font-semibold text-cyan-400 uppercase tracking-wider border-b border-slate-800 pb-2">
+                        Backend Matplotlib Model Diagnostics
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="bg-slate-950 p-2 rounded-xl border border-slate-800">
+                            <span class="text-[11px] text-slate-400 font-mono block mb-1">Cost Function Convergence</span>
+                            <img id="costGraphImg" src="" alt="Cost Function Graph" class="w-full rounded-lg min-h-[160px] bg-slate-900 object-cover">
+                        </div>
+                        <div class="bg-slate-950 p-2 rounded-xl border border-slate-800">
+                            <span class="text-[11px] text-slate-400 font-mono block mb-1">Logistic Regression Sigmoid Curve</span>
+                            <img id="logisticGraphImg" src="" alt="Logistic Regression Curve" class="w-full rounded-lg min-h-[160px] bg-slate-900 object-cover">
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="bg-slate-900/90 p-6 rounded-2xl border border-slate-800/80 shadow-xl space-y-6">
+            <div class="flex justify-between items-center border-b border-slate-800 pb-4">
+                <div>
+                    <h2 class="text-lg font-bold text-white flex items-center gap-2">
+                        <span class="w-2.5 h-2.5 rounded-full bg-cyan-400"></span>
+                        Full Dataset Bulk Predictions
+                    </h2>
+                    <p class="text-xs text-slate-400">Batch predictions evaluated for all dataset instances.</p>
+                </div>
+                <div class="flex gap-2">
+                    <button id="btnTabDiab" onclick="switchTab('diab')" class="px-4 py-1.5 text-xs font-bold rounded-lg bg-cyan-500 text-slate-950 shadow">
+                        Diabetes Dataset
+                    </button>
+                    <button id="btnTabHeart" onclick="switchTab('heart')" class="px-4 py-1.5 text-xs font-bold rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700">
+                        Heart Disease Dataset
+                    </button>
+                </div>
+            </div>
+
+            <div id="viewDiabetes" class="space-y-4">
+                <div class="grid grid-cols-3 gap-4 text-center">
+                    <div class="bg-slate-950 p-3 rounded-xl border border-slate-800">
+                        <span class="text-xs text-slate-400 block">Total Elements</span>
+                        <span id="diabTotalCount" class="text-lg font-bold text-cyan-400">-</span>
+                    </div>
+                    <div class="bg-slate-950 p-3 rounded-xl border border-slate-800">
+                        <span class="text-xs text-slate-400 block">High Risk Predicted</span>
+                        <span id="diabHighRiskCount" class="text-lg font-bold text-red-400">-</span>
+                    </div>
+                    <div class="bg-slate-950 p-3 rounded-xl border border-slate-800">
+                        <span class="text-xs text-slate-400 block">Average Dataset Risk</span>
+                        <span id="diabAvgRisk" class="text-lg font-bold text-amber-400">-</span>
+                    </div>
+                </div>
+
+                <div class="overflow-x-auto max-h-80 rounded-xl border border-slate-800">
+                    <table class="w-full text-left text-xs text-slate-300">
+                        <thead class="bg-slate-950 text-cyan-400 font-mono sticky top-0 border-b border-slate-800">
+                            <tr>
+                                <th class="p-3">#</th>
+                                <th class="p-3">Glucose</th>
+                                <th class="p-3">BMI</th>
+                                <th class="p-3">Age</th>
+                                <th class="p-3">Ground Truth</th>
+                                <th class="p-3">Predicted Risk %</th>
+                                <th class="p-3">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="diabTableBody" class="divide-y divide-slate-800/50 bg-slate-900/50">
+                            <tr><td colspan="7" class="p-4 text-center text-slate-500">Click "Load Full Datasets Predictions" to view predictions.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="viewHeart" class="space-y-4 hidden">
+                <div class="grid grid-cols-3 gap-4 text-center">
+                    <div class="bg-slate-950 p-3 rounded-xl border border-slate-800">
+                        <span class="text-xs text-slate-400 block">Total Elements</span>
+                        <span id="heartTotalCount" class="text-lg font-bold text-cyan-400">-</span>
+                    </div>
+                    <div class="bg-slate-950 p-3 rounded-xl border border-slate-800">
+                        <span class="text-xs text-slate-400 block">High Risk Predicted</span>
+                        <span id="heartHighRiskCount" class="text-lg font-bold text-red-400">-</span>
+                    </div>
+                    <div class="bg-slate-950 p-3 rounded-xl border border-slate-800">
+                        <span class="text-xs text-slate-400 block">Average Dataset Risk</span>
+                        <span id="heartAvgRisk" class="text-lg font-bold text-amber-400">-</span>
+                    </div>
+                </div>
+
+                <div class="overflow-x-auto max-h-80 rounded-xl border border-slate-800">
+                    <table class="w-full text-left text-xs text-slate-300">
+                        <thead class="bg-slate-950 text-cyan-400 font-mono sticky top-0 border-b border-slate-800">
+                            <tr>
+                                <th class="p-3">#</th>
+                                <th class="p-3">Cholesterol</th>
+                                <th class="p-3">Blood Pressure</th>
+                                <th class="p-3">Age</th>
+                                <th class="p-3">Ground Truth</th>
+                                <th class="p-3">Predicted Risk %</th>
+                                <th class="p-3">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="heartTableBody" class="divide-y divide-slate-800/50 bg-slate-900/50">
+                            <tr><td colspan="7" class="p-4 text-center text-slate-500">Click "Load Full Datasets Predictions" to view predictions.</td></tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
 
@@ -110,9 +226,8 @@
     </main>
 
     <script>
-        // 1. Initialize Chart.js Risk Gauge
         let riskChart;
-        function initChart() {
+        function initGauge() {
             const ctx = document.getElementById('riskChart').getContext('2d');
             riskChart = new Chart(ctx, {
                 type: 'doughnut',
@@ -131,12 +246,11 @@
                 }
             });
         }
-        initChart();
+        initGauge();
 
-        // 2. Submit Form & Connect to Flask Backend
+        // Handle Individual Prediction Form
         document.getElementById('healthForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-
             const payload = {
                 glucose: document.getElementById('glucose').value,
                 cholesterol: document.getElementById('cholesterol').value,
@@ -146,42 +260,113 @@
             };
 
             try {
-                // Call Flask API running on port 5001
-                const response = await fetch('http://127.0.0.1:5001/predict', {
+                const res = await fetch('http://127.0.0.1:5001/predict', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload)
                 });
+                const data = await res.json();
 
-                if (!response.ok) {
-                    throw new Error(`HTTP error! Status: ${response.status}`);
-                }
+                // Set Category and Dual-Engine Quantum Fidelity/Overlap Scores
+                document.getElementById('detectedDataset').innerText = data.category;
+                document.getElementById('plDiab').innerText = data.pennylane_fidelity_diab;
+                document.getElementById('plHeart').innerText = data.pennylane_fidelity_heart;
+                document.getElementById('qkDiab').innerText = data.qiskit_fidelity_diab;
+                document.getElementById('qkHeart').innerText = data.qiskit_fidelity_heart;
 
-                const result = await response.json();
-
-                // Update UI elements with response values
-                document.getElementById('detectedDataset').innerText = result.category;
-                document.getElementById('qDiab').innerText = result.quantum_fidelity_diab;
-                document.getElementById('qHeart').innerText = result.quantum_fidelity_heart;
-                document.getElementById('riskScoreText').innerText = result.risk_rate + '%';
-                document.getElementById('solutionText').innerText = result.solution;
+                document.getElementById('riskScoreText').innerText = data.risk_rate + '%';
+                document.getElementById('solutionText').innerText = data.solution;
 
                 const badge = document.getElementById('riskBadge');
-                badge.innerText = result.risk_level;
-                badge.style.backgroundColor = result.color + '20';
-                badge.style.color = result.color;
-                badge.style.borderColor = result.color + '40';
+                badge.innerText = data.risk_level;
+                badge.style.backgroundColor = data.color + '20';
+                badge.style.color = data.color;
 
-                // Update Risk Donut Chart
-                riskChart.data.datasets[0].data = [result.risk_rate, 100 - result.risk_rate];
-                riskChart.data.datasets[0].backgroundColor = [result.color, '#1E293B'];
+                riskChart.data.datasets[0].data = [data.risk_rate, 100 - data.risk_rate];
+                riskChart.data.datasets[0].backgroundColor = [data.color, '#1E293B'];
                 riskChart.update();
 
-            } catch (error) {
-                console.error('API Connection Error:', error);
-                alert('Cannot connect to backend server. Ensure "python app.py" is running in your VS Code terminal on port 5001!');
+                // Render Base64 Matplotlib Graphs
+                document.getElementById('costGraphImg').src = 'data:image/png;base64,' + data.cost_graph;
+                document.getElementById('logisticGraphImg').src = 'data:image/png;base64,' + data.logistic_graph;
+
+            } catch (err) {
+                alert('Cannot connect to backend server. Ensure python app.py is running on port 5001!');
             }
         });
+
+        // Fetch Bulk Dataset Predictions
+        async function fetchBatchPredictions() {
+            try {
+                const res = await fetch('http://127.0.0.1:5001/batch_predict');
+                const data = await res.json();
+
+                // 1. Populate Diabetes Data
+                document.getElementById('diabTotalCount').innerText = data.diabetes_summary.total_samples;
+                document.getElementById('diabHighRiskCount').innerText = data.diabetes_summary.high_risk_count;
+                document.getElementById('diabAvgRisk').innerText = data.diabetes_summary.avg_risk + '%';
+
+                let diabRows = '';
+                data.diabetes_summary.data.forEach(item => {
+                    const badgeClass = item.predicted_risk >= 50 ? 'text-red-400 bg-red-950/60' : 'text-emerald-400 bg-emerald-950/60';
+                    diabRows += `<tr>
+                        <td class="p-3">${item.id}</td>
+                        <td class="p-3">${item.glucose}</td>
+                        <td class="p-3">${item.bmi}</td>
+                        <td class="p-3">${item.age}</td>
+                        <td class="p-3">${item.actual_target}</td>
+                        <td class="p-3 font-mono font-bold">${item.predicted_risk}%</td>
+                        <td class="p-3"><span class="px-2 py-0.5 rounded ${badgeClass}">${item.risk_status}</span></td>
+                    </tr>`;
+                });
+                document.getElementById('diabTableBody').innerHTML = diabRows;
+
+                // 2. Populate Heart Data
+                document.getElementById('heartTotalCount').innerText = data.heart_summary.total_samples;
+                document.getElementById('heartHighRiskCount').innerText = data.heart_summary.high_risk_count;
+                document.getElementById('heartAvgRisk').innerText = data.heart_summary.avg_risk + '%';
+
+                let heartRows = '';
+                data.heart_summary.data.forEach(item => {
+                    const badgeClass = item.predicted_risk >= 50 ? 'text-red-400 bg-red-950/60' : 'text-emerald-400 bg-emerald-950/60';
+                    heartRows += `<tr>
+                        <td class="p-3">${item.id}</td>
+                        <td class="p-3">${item.cholesterol}</td>
+                        <td class="p-3">${item.bp}</td>
+                        <td class="p-3">${item.age}</td>
+                        <td class="p-3">${item.actual_target}</td>
+                        <td class="p-3 font-mono font-bold">${item.predicted_risk}%</td>
+                        <td class="p-3"><span class="px-2 py-0.5 rounded ${badgeClass}">${item.risk_status}</span></td>
+                    </tr>`;
+                });
+                document.getElementById('heartTableBody').innerHTML = heartRows;
+
+                // 3. Set default Matplotlib graphs
+                document.getElementById('costGraphImg').src = 'data:image/png;base64,' + data.graphs.cost_diab;
+                document.getElementById('logisticGraphImg').src = 'data:image/png;base64,' + data.graphs.logistic_diab;
+
+            } catch (err) {
+                alert('Failed to fetch batch dataset predictions.');
+            }
+        }
+
+        // Tab Switching Logic
+        function switchTab(tab) {
+            if (tab === 'diab') {
+                document.getElementById('viewDiabetes').classList.remove('hidden');
+                document.getElementById('viewHeart').classList.add('hidden');
+                document.getElementById('btnTabDiab').className = 'px-4 py-1.5 text-xs font-bold rounded-lg bg-cyan-500 text-slate-950 shadow';
+                document.getElementById('btnTabHeart').className = 'px-4 py-1.5 text-xs font-bold rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700';
+            } else {
+                document.getElementById('viewDiabetes').classList.add('hidden');
+                document.getElementById('viewHeart').classList.remove('hidden');
+                document.getElementById('btnTabDiab').className = 'px-4 py-1.5 text-xs font-bold rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700';
+                document.getElementById('btnTabHeart').className = 'px-4 py-1.5 text-xs font-bold rounded-lg bg-cyan-500 text-slate-950 shadow';
+            }
+        }
+
+        // Automatically fetch batch predictions on page load
+        window.addEventListener('DOMContentLoaded', fetchBatchPredictions);
     </script>
 </body>
 </html>
