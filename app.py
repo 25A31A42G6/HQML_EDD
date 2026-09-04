@@ -5,7 +5,7 @@ from flask import Flask, render_template, request, jsonify
 from flask_cors import CORS
 import pandas as pd
 import numpy as np
-from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import StandardScaler, MinMaxScaler
 from sklearn.linear_model import LogisticRegression
 
 # Headless backend setup for Matplotlib server rendering
@@ -58,9 +58,8 @@ clf_heart = LogisticRegression()
 clf_heart.fit(X_heart_scaled, y_heart)
 
 # ---------------------------------------------------------
-# 2. QUANTUM CIRCUIT SETUP (PENNYLANE & QISKIT)
+# 2. QUANTUM ENGINE & CLUSTERING SETUP
 # ---------------------------------------------------------
-# PennyLane Engine
 pennylane_dev = qml.device("default.qubit", wires=2)
 
 @qml.qnode(pennylane_dev)
@@ -73,19 +72,12 @@ def get_pennylane_fidelity(v1, v2):
     probs = pennylane_kernel_circuit(v1, v2)
     return float(probs[0])
 
-# --- ENHANCED QISKIT ENGINE FOR HIGHER FIDELITY ---
 def get_qiskit_fidelity(v1, v2):
-    """
-    Computes enhanced Qiskit state fidelity using CNOT entanglement 
-    and feature angle scaling to improve dynamic range and overlap alignment.
-    """
-    # Circuit 1: User Feature Vector Encoding with Entanglement
     qc1 = QuantumCircuit(2)
     qc1.ry(v1[0] * np.pi, 0)
     qc1.ry(v1[1] * np.pi, 1)
-    qc1.cx(0, 1)  # Entangle qubits to capture correlated biomarker relationships
+    qc1.cx(0, 1)
 
-    # Circuit 2: Centroid Feature Vector Encoding
     qc2 = QuantumCircuit(2)
     qc2.ry(v2[0] * np.pi, 0)
     qc2.ry(v2[1] * np.pi, 1)
@@ -93,13 +85,55 @@ def get_qiskit_fidelity(v1, v2):
 
     sv1 = Statevector.from_instruction(qc1)
     sv2 = Statevector.from_instruction(qc2)
-
-    # Return linear state vector inner product magnitude |<ψ1|ψ2>| 
-    # (Removes squaring effect to match PennyLane's linear expectation scale)
     return float(np.abs(sv1.inner(sv2)))
 
-CENTROID_DIAB = [0.8, 0.3]
-CENTROID_HEART = [0.2, 0.9]
+# --- QUANTUM K-MEANS CLUSTERING IMPLEMENTATION ---
+class QuantumKMeans:
+    def __init__(self, k=2, max_iters=10):
+        self.k = k
+        self.max_iters = max_iters
+        self.centroids = None
+
+    def fit(self, X):
+        # Normalize features to [0, 1] range for quantum gate encoding
+        minmax = MinMaxScaler()
+        X_norm = minmax.fit_transform(X[:, :2])  # Using first 2 features for 2-qubit register
+        
+        # Initialize centroids randomly from dataset
+        np.random.seed(42)
+        idx = np.random.choice(len(X_norm), self.k, replace=False)
+        self.centroids = X_norm[idx]
+
+        for _ in range(self.max_iters):
+            clusters = [[] for _ in range(self.k)]
+            for point in X_norm:
+                # Calculate quantum distance (1 - state fidelity)
+                fidelities = [get_qiskit_fidelity(point, c) for c in self.centroids]
+                closest_centroid = np.argmax(fidelities)
+                clusters[closest_centroid].append(point)
+
+            # Update centroids to cluster mean
+            new_centroids = []
+            for i in range(self.k):
+                if len(clusters[i]) > 0:
+                    new_centroids.append(np.mean(clusters[i], axis=0))
+                else:
+                    new_centroids.append(self.centroids[i])
+            
+            if np.allclose(self.centroids, new_centroids):
+                break
+            self.centroids = np.array(new_centroids)
+        return self.centroids
+
+# Fit Quantum Clusters on normalized feature spaces
+qkmeans_diab = QuantumKMeans(k=2)
+centroids_diab_q = qkmeans_diab.fit(X_diab)
+
+qkmeans_heart = QuantumKMeans(k=2)
+centroids_heart_q = qkmeans_heart.fit(X_heart)
+
+CENTROID_DIAB = centroids_diab_q[0].tolist()
+CENTROID_HEART = centroids_heart_q[0].tolist()
 
 # ---------------------------------------------------------
 # 3. MATPLOTLIB BACKEND GRAPH GENERATORS
@@ -217,7 +251,6 @@ def predict():
         qk_fidelity_diab = get_qiskit_fidelity(user_feature_vector, CENTROID_DIAB)
         qk_fidelity_heart = get_qiskit_fidelity(user_feature_vector, CENTROID_HEART)
 
-        # Average quantum scores across both engines
         avg_fidelity_diab = (pl_fidelity_diab + qk_fidelity_diab) / 2
         avg_fidelity_heart = (pl_fidelity_heart + qk_fidelity_heart) / 2
 
